@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>
+		Student Details
+	</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/cosmo/bootstrap.min.css" />
+
+<!--script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+	<script type="text/javascript">
+		
+		var user;
+		var myJson = null;
+		
+		let url_str = window.location.href;
+		let url = new URL(url_str);
+		let search_params = url.searchParams;
+		
+		user = search_params.get('username');
+		
+		function popup(){
+		
+			window.location.href = "http://localhost:8080/Student/new.html?username="+user;
+			return false;
+		}
+		
+		function home(){
+		
+			//alert("LOGIN PAGE");
+			window.location.href = "http://localhost:8080/Student/";
+			return false;
+		}
+		
+		
+		
+		
+		const userAction = async () => {
+		  const response = await fetch('http://localhost:8181/api/student/'+user);
+		  myJson = await response.json();
+		  return myJson;
+		};
+		
+		const dataPopulate = () => {
+			console.log(user);
+			myJson.forEach((item, index) => {
+				const display = "<tr><td>"+item.id+"</td><td>"+item.firstname+"</td><td>"+item.lastname+"</td><td>"+item.age+"</td><td>"+item.phone+"</td><td>"+item.email+"</td><td>"+item.owner+"</td><td><a href='edit.html?id="+item.id+"&username="+user+"'    class='btn-edit' > Edit</a></td><td><a class='btn-delete' itemID='"+item.id+"'>Delete</a></td></tr>"
+				/*const display = "<tr><td>"+item.id+"</td><td>"+item.firstname+"</td><td>"+item.lastname+"</td><td>"+item.age+"</td><td>"+item.phone+"</td><td>"+item.email+"</td><td>"+item.owner+"</td><td><a href='edit.html?id="+item.id+"' class='btn-edit' > Edit</a></td><td><a class='btn-delete' itemID='"+item.id+"'>Delete</a></td></tr>"*/
+				document.getElementById("student-table-data").innerHTML = document.getElementById("student-table-data").innerHTML + display;
+			})
+			
+			
+			$(document).on('click','.btn-delete',function(){
+			//alert("Record Deleted");
+				$.ajax({
+					url: "http://localhost:8181/api/student/delete/"+$(this).attr('itemID'),
+					method: "POST"
+					}).done(function(e) {
+						console.log("DELETED",e);
+						alert("Record Deleted");
+						location.href = "homePage.html?username="+user;
+					});
+				
+			});
+			
+			/*window.location.href = "homePage.html?username="+user;
+			return false;*/
+						
+		}
+		
+		userAction();
+		setTimeout(() => {
+			dataPopulate();
+		}, 500);
+		
+	</script>
+
+	<style type="text/css">
+		a {
+		  color: black;
+		  text-decoration: none;
+		}
+		a:hover {
+		 color: black;
+		 cursor : Pointer;
+		}
+	</style>
+
+</head>
+
+<body>
+<center>
+	<div>
+		<h2>
+			<b>Student Details </b>
+		</h2>
+		<tr>
+			<div>
+				<button id="btn-new" onclick="popup()"> Add New Student </button>
+				<button id="btn-logout" onclick="home()"> Log out </button>
+			</div>
+			<br>
+		</tr>
+		<tr>
+
+			<div class="col-sm-9" align="center">
+				<div class="panel-body" align="center">
+					<table style="text-align:center;" class="table table-striped">
+						<thead class="thead-dark">
+							<tr>
+								<th>Student ID</th>
+								<th>First Name</th>
+								<th>Last Name</th>
+								<th>Age</th>
+								<th>Phone</th>
+								<th>Email ID</th>
+								<th>Owner</th>
+								<th>Edit</th>
+								<th>Delete</th>
+							</tr>
+						</thead>
+						<tbody id="student-table-data">
+
+						</tbody>
+					</table>
+
+				</div>
+
+			</div>
+
+		</tr>
+
+		</tbody>
+		</table>
+		<div>
+		</center>
+</body>
+</html>

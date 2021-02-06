@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Login Page</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/cosmo/bootstrap.min.css" />
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+		
+		var usr,pass;
+		
+		function validate(){		
+			
+			usr = document.getElementById("username").value;
+			pass = document.getElementById("pwd").value;
+			
+			var namechk = "";
+				
+			namechk = usr.trim();
+			if (namechk == "") {
+				alert("Please Enter Valid User Name");
+				document.getElementById("username").focus();
+				return false;
+			}
+			
+			namechk = pass.trim();
+			if (namechk == "") {
+				alert("Please Enter Valid Password");
+				document.getElementById("pwd").focus();
+				return false;
+			}
+					
+			return true;
+		}
+	
+
+		$(document).on('click','.btn-submit',function(){
+			
+			var validateStatus = validate();
+			if(validateStatus){
+				const res = $.ajax({
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					async: false,
+					type: "POST",
+						url: "http://localhost:8181/api/login/",
+						data: JSON.stringify({
+							"username" : usr,
+							"password" : pass,
+						}),
+										
+				});
+				
+				var status = res.responseText;
+				console.log(res.responseText);
+				console.log(status);
+				
+				if(status === "Valid ID and PWD"){
+					alert("Login Successfully");
+					window.location.href = "http://localhost:8080/Student/homePage.html?username="+usr;
+					return false;
+				}
+				else if(status === "Invalid PWD"){
+					alert("Invalid Password");
+				}
+				else if(status === "Invalid User"){
+					alert("Invalid User Name");
+				}
+				
+			};
+					
+		});
+		
+	</script>
+
+	
+</head>
+
+<body>
+	<div align="center">
+		<h1 style="margin-top:50px">
+			<b>Login </b>
+		</h1>
+		<br />
+		<div class="col-sm-4">
+
+			<form id="myForm" method="POST" >
+
+				<div>
+					<tr>
+						<label class="form-label">User Name</label>
+						<td>
+							<input type="text" id="username" class="form-control"
+							pattern="[a-zA-Z][a-zA-Z]{2,24}" title="Enter Valid User Name"
+							placeholder="User Name" required />
+						</td>
+					</tr>
+				</div>
+
+				<div>
+					<tr>
+						<label class="form-label" style="margin-top:5px;">Password</label>				
+						<td>
+							<input type="password" id="pwd" minlength="2" maxlenght="25" class="form-control"
+							pattern="[a-zA-Z0-9][a-zA-Z0-9]{7,24}" title="Enter Valid Password"
+							placeholder="Password" required />
+						</td>
+					</tr>
+				</div>
+				
+				<br>
+				<tr>
+					<td colspan="2">
+						<button class="btn btn-info btn-submit" >Login</button>
+					</td>
+				</tr>
+				</table>
+			</form>
+		</div>
+</body>
+</html>

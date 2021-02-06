@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Create New Student</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/cosmo/bootstrap.min.css" />
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+	<script type="text/javascript">
+
+		var fn,ln,age,ph,mail,user;
+	
+		let url_str = window.location.href;
+		let url = new URL(url_str);
+		let search_params = url.searchParams;
+		
+		user = search_params.get('username');
+		
+		function pop(){
+		
+			window.location.href = "http://localhost:8080/Student/homePage.html?username="+user;
+			return false;
+		}
+		
+		function validate() {
+
+			//console.log("In Validate");
+			fn = document.getElementById("fname").value;
+			ln = document.getElementById("lname").value;
+			age = document.getElementById("age").value;
+			ph = document.getElementById("phone").value;
+			mail = document.getElementById("email").value;
+			//console.log("In Validate ",ph);
+			
+			var namechk = "";
+			var exp = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+
+			namechk = fn.trim();
+			if (namechk == "") {
+				alert("Please Enter Valid First Name");
+				document.getElementById("fname").focus();
+				return false;
+			}
+
+			if (!isNaN(namechk)) {
+				alert("Please Enter Only Characters in First Name");
+				document.getElementById("fname").focus();
+				return false;
+			}
+
+			namechk = ln.trim();
+			if (namechk == "") {
+				alert("Please Enter Valid Last Name");
+				document.getElementById("lname").focus();
+				return false;
+			}
+
+			if (!isNaN(namechk)) {
+				alert("Please Enter Only Characters in Last Name");
+				document.getElementById("lname").focus();
+				return false;
+			}
+
+			if (age < 10 || age > 50) {
+				alert("Please Enter Age between 10 to 50");
+				document.getElementById("age").focus();
+				return false;
+			}
+
+			if (ph < 6355111111 || ph > 9999999999) {
+				alert("Please Enter 10 Digit Contact Number.");
+				document.getElementById("phone").focus();
+				return false;
+			}
+
+			
+			if (exp.test(mail) == false) {
+				alert("Please Enter Valid Email ID.");
+				document.getElementById("email").focus();
+				return false;
+			}
+			
+		
+			return true;
+			
+		}
+		
+		var frm = $('#myForm');
+		
+		/* STATIC DATA INSERTED SUCCESSFULLY
+		
+		$(document).on('click','.btn-submit',function(){
+			console.log("data",frm.serialize());
+			$.ajax({
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			async: false,
+			type: "POST",
+				url: "http://localhost:8181/api/student/create",
+				data: JSON.stringify({
+					"firstname":"Finalaaa",
+					"lastname" : "Finalaa",
+					"age" : "30",
+					"phone" : "8596741230",
+					"email" : "Final@gmail.com"
+				}),
+				
+			}).done(function(e) {
+			console.log("============== ",e);
+			location.href = "index.html";
+			});
+		});*/
+			
+			
+		$(document).on('click','.btn-submit',function(){
+			console.log("Check Click");
+			
+			var validateStatus = validate();
+			console.log(validateStatus,typeof validateStatus);
+			if(validateStatus){
+				console.log(fn+ln+age+ph+mail);
+				alert("Record Inserted");
+				$.ajax({
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					async: false,
+					type: "POST",
+						url: "http://localhost:8181/api/student/create",
+						data: JSON.stringify({
+							"firstname":fn,
+							"lastname" : ln,
+							"age" : age,
+							"phone" : ph,
+							"email" : mail,
+							"owner" : user
+						}),
+						
+				}).done(function(e) {
+					console.log("============== ",e);
+					alert("Record Inserted..");
+					window.location.href = "http://localhost:8080/Student/homePage.html?username="+user;
+					return false;
+				});
+		
+			}
+			
+			pop();
+			window.location.href = "http://localhost:8080/Student/homePage.html?username="+user;
+			return false;
+		});
+		
+	</script>
+
+</head>
+
+<body>
+	<div align="center">
+		<h1>
+			<b>Student Details </b>
+		</h1>
+		<br />
+		<div class="col-sm-4">
+
+			<form id="myForm" action="pop()" method="POST" >
+
+				<div>
+					<tr>
+						<label class="form-label">First Name</label>
+						<td>
+							<input type="text" id="fname" minlength="2" maxlenght="25" class="form-control"
+							pattern="[a-zA-Z][a-zA-Z ]{2,24}" title="Enter Valid First Name"
+							placeholder="First Name" required />
+						</td>
+					</tr>
+				</div>
+
+				<div>
+
+					<tr>
+						<label class="form-label">Last Name</label>				
+						<td>
+							<input type="text" id="lname" minlength="2" maxlenght="25" class="form-control"
+							pattern="[a-zA-Z][a-zA-Z ]{2,24}" title="Enter Valid Last Name"
+							placeholder="Last Name" required />
+						</td>
+					</tr>
+				</div>
+				<div>
+					<tr>
+						<label class="form-label">Age</label>
+						<td>
+							<input type="number" id="age" class="form-control" min=10 max=50 placeholder="Age" required />
+						</td>
+					</tr>
+				</div>
+
+				<div>
+					<tr>
+						<label class="form-label">Phone</label>
+						<td><input type="number" id="phone" class="form-control" min=6355111111 max=9999999999 placeholder="Phone" required /></td>
+					</tr>
+				</div>
+
+				<div>
+					<tr>
+						<label class="form-label">Email</label>
+						<td><input type="email" id="email" class="form-control" placeholder="Email" required /></td>
+					</tr>
+				</div>
+				<br>
+				<tr>
+					<td colspan="2">
+						<button class="btn btn-info btn-submit" >Save</button>
+					</td>
+				</tr>
+				</table>
+			</form>
+		</div>
+</body>
+</html>
