@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Create New Student</title>
+
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/cosmo/bootstrap.min.css" />
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js">
+	
+</script>
+<script type="text/javascript">
+
+	function popup(){
+		alert("Record Inserted");	
+	}
+	
+	function validate() {
+
+		var fn = document.getElementById("fname").value;
+		var ln = document.getElementById("lname").value;
+		var age = document.getElementsByName("age").value;
+		var ph = document.getElementsByName("phone")[0].value;
+		var mail = document.getElementsByName("email").value;
+		var namechk = "";
+		//var exp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+		var exp = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+
+		namechk = fn.trim();
+		if (namechk == "") {
+			alert("Please Enter Valid First Name");
+			document.myForm.fname.focus();
+			return false;
+		}
+
+		if (!isNaN(namechk)) {
+			alert("Please Enter Only Characters in First Name");
+			document.myForm.fname.focus();
+			return false;
+		}
+
+		namechk = ln.trim();
+		if (namechk == "") {
+			alert("Please Enter Valid Last Name");
+			document.myForm.lname.focus();
+			return false;
+		}
+
+		if (!isNaN(namechk)) {
+			alert("Please Enter Only Characters in Last Name");
+			document.myForm.lname.focus();
+			return false;
+		}
+
+		if (age < 10) {
+			alert("Please Enter Age greater than 10");
+			document.myForm.age.focus();
+			return false;
+		}
+
+		if (ph.length != 10) {
+			alert("Please Enter 10 Digit Contact Number.");
+			document.myForm.phone.focus();
+			return false;
+		}
+
+		if (exp.test(mail) == true) {
+			alert("Please Enter Valid Email ID.");
+			document.myForm.email.focus();
+			return false;
+		}
+	}
+</script>
+
+</head>
+<body>
+	<div align="center">
+		<h1>
+			<b>Student Details </b>
+		</h1>
+		<br />
+		<div class="col-sm-4">
+
+			<form name="myForm" action="#" th:action="@{/save}"
+				th:object="${student}" method="post" onSubmit="popup()">
+
+				<div>
+					<tr>
+						<label class="form-label">First Name</label>
+						<td><input type="hidden" th:field="*{id}" /> 
+							<input type="text" th:field="*{firstname}" id="fname" 
+							minlength="2" maxlenght="25" class="form-control"
+							pattern="[a-zA-Z][a-zA-Z ]{2,24}" title="Enter Valid First Name"
+							placeholder="First Name" required />
+						</td>
+					</tr>
+				</div>
+
+				<div>
+
+					<tr>
+						<label class="form-label">Last Name</label>
+						<td><input type="text" id="lname" th:field="*{lastname}"
+							minlength="2" maxlenght="25" class="form-control"
+							pattern="[a-zA-Z][a-zA-Z ]{2,24}" title="Enter Valid Last Name"
+							placeholder="Last Name" required /></td>
+					</tr>
+				</div>
+				<div>
+					<tr>
+						<label class="form-label">Age</label>
+						<td>
+							<input type="number" id="age" th:field="*{age}"
+							class="form-control" min=10 max=50 placeholder="Age" required />
+						</td>
+					</tr>
+				</div>
+
+				<div>
+					<tr>
+						<label class="form-label">Phone</label>
+						<td><input type="number" name="phone" th:field="*{phone}"
+							class="form-control" placeholder="Phone" required /></td>
+					</tr>
+				</div>
+
+				<div>
+					<tr>
+						<label class="form-label">Email</label>
+						<td><input type="email" id="email" th:field="*{email}"
+							class="form-control" placeholder="Email" required /></td>
+					</tr>
+				</div>
+				<br>
+				<tr>
+					<td colspan="2"><button type="submit" onclick="return(validate());"
+						class="btn btn-info">Save</button></td>
+				</tr>
+				</table>
+			</form>
+		</div>
+</body>
+</html>
